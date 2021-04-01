@@ -9,12 +9,13 @@ class Movies extends Component {
     const movies = this.state.movies.filter((m) => m._id !== movieId);
     this.setState({ movies });
   };
-  renderMovies() {
+
+  render() {
     const { movies } = this.state;
     if (movies.length > 0) {
       return (
         <React.Fragment>
-          <h4 className="my-4">
+          <h4 className="mb-4">
             Showing {movies.length} movies in the database
           </h4>
           <table className="table">
@@ -32,8 +33,8 @@ class Movies extends Component {
                 <tr key={m._id}>
                   <td>{m.title}</td>
                   <td>{m.genre.name}</td>
-                  <td>{m.stock}</td>
                   <td>{m.numberInStock}</td>
+                  <td>{m.dailyRentalRate}</td>
                   <td>
                     <button
                       onClick={() => this.handleDelete(m._id)}
@@ -51,16 +52,11 @@ class Movies extends Component {
               {/* {this.state.movies.pop()._id} */}
             </tbody>
           </table>
+          {/* table.table>thead>tr>th*4 */}
         </React.Fragment>
       );
-    } else {
-      return <h4 className="my-4">There are no movies in the database.</h4>;
     }
-  }
-
-  render() {
-    console.log(this.state.movies);
-    return <React.Fragment>{this.renderMovies()}</React.Fragment>;
+    return <h4 className="my-4">There are no movies in the database.</h4>;
   }
 }
 
