@@ -46,23 +46,14 @@ class Movies extends Component {
         this.setState({ sortColumn });
     };
 
-    render() {
-        const { length: count } = this.state.movies;
-
+    getPagedData = () => {
         const {
             pageSize,
             currentPage,
             sortColumn,
             movies: allMovies,
-            genres,
             selectedGenre,
         } = this.state;
-
-        if (count === 0) {
-            return (
-                <h4 className="my-4">There are no movies in the database.</h4>
-            );
-        }
 
         const filtered =
             selectedGenre && selectedGenre._id
@@ -74,18 +65,34 @@ class Movies extends Component {
             [sortColumn.order]
         );
         const movies = paginate(sorted, currentPage, pageSize);
+
+        return { totalCount: filtered.length, data: movies };
+    };
+
+    render() {
+        const { length: count } = this.state.movies;
+        const { pageSize, currentPage, sortColumn, genres } = this.state;
+
+        if (count === 0) {
+            return (
+                <h4 className="my-4">There are no movies in the database.</h4>
+            );
+        }
+
+        const { totalCount, data: movies } = this.getPagedData();
+
         return (
             <div className="row">
                 <div className="col-2">
                     <ListGroup
                         items={genres}
-                        selectedItem={selectedGenre}
+                        selectedItem={this.state.selectedGenre}
                         onItemSelect={this.handleGenreSelect}
                     />
                 </div>
                 <div className="col">
                     <h4 className="mb-4">
-                        Showing {filtered.length} movies in the database
+                        Showing {totalCount} movies in the database
                     </h4>
                     <MoviesTable
                         movies={movies}
@@ -96,7 +103,7 @@ class Movies extends Component {
                     />
                     {/* table.table>thead>tr>th*4 */}
                     <Pagination
-                        itemsCount={filtered.length}
+                        itemsCount={totalCount}
                         pageSize={pageSize}
                         currentPage={currentPage}
                         onPageChange={this.handlePageChange}
