@@ -15,6 +15,7 @@ class Movies extends Component {
         currentPage: 1,
         pageSize: 4,
         sortColumn: { path: "title", order: "asc" },
+        selectedGenre: { _id: "", name: "All genres" },
         // currentFilter: null,
         // selectedGenre: null,
     };
@@ -37,21 +38,11 @@ class Movies extends Component {
         this.setState({ currentPage: page });
     };
 
-    // handleFilterChange = (filter) => {
-    //     this.setState({ currentFilter: filter });
-    // };
     handleGenreSelect = (genre) => {
         this.setState({ selectedGenre: genre, currentPage: 1 });
     };
 
-    handleSort = (path) => {
-        const sortColumn = { ...this.state.sortColumn };
-        if (sortColumn.path === path) {
-            sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
-        } else {
-            sortColumn.path = path;
-            sortColumn.order = "asc";
-        }
+    handleSort = (sortColumn) => {
         this.setState({ sortColumn });
     };
 
@@ -65,8 +56,6 @@ class Movies extends Component {
             movies: allMovies,
             genres,
             selectedGenre,
-            // genreFilters,
-            // currentFilter,
         } = this.state;
 
         if (count === 0) {
@@ -85,16 +74,9 @@ class Movies extends Component {
             [sortColumn.order]
         );
         const movies = paginate(sorted, currentPage, pageSize);
-
         return (
             <div className="row">
                 <div className="col-2">
-                    {/* <Filtering
-                        filters={genreFilters}
-                        onFilterChange={this.handleFilterChange}
-                        currentFilter={currentFilter}
-                    /> */}
-
                     <ListGroup
                         items={genres}
                         selectedItem={selectedGenre}
@@ -110,6 +92,7 @@ class Movies extends Component {
                         onLike={this.handleLike}
                         onDelete={this.handleDelete}
                         onSort={this.handleSort}
+                        sortColumn={sortColumn}
                     />
                     {/* table.table>thead>tr>th*4 */}
                     <Pagination
