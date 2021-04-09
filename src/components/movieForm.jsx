@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 
-class MovieDetails extends Component {
+class MovieForm extends Component {
     state = {};
     handleSave = () => {
         this.props.history.push("/movies");
     };
     render() {
+        const { match } = this.props;
         return (
             <React.Fragment>
-                <h1>Movie Form {this.props.match.params.id}</h1>
+                <h1>Movie Form {match.params.id}</h1>
                 <button className="btn btn-primary" onClick={this.handleSave}>
                     Save
                 </button>
@@ -17,4 +18,4 @@ class MovieDetails extends Component {
     }
 }
 
-export default MovieDetails;
+export default MovieForm;
