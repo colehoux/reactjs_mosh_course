@@ -11,19 +11,13 @@ class MoviesTable extends Component {
         {
             key: "like",
             content: (movie) => (
-                <Like
-                    onLike={() => this.props.onLike(movie)}
-                    liked={movie.liked}
-                />
+                <Like onLike={() => this.props.onLike(movie)} liked={movie.liked} />
             ),
         },
         {
             key: "delete",
             content: (movie) => (
-                <button
-                    onClick={() => this.props.onDelete(movie._id)}
-                    className="btn btn-danger"
-                >
+                <button onClick={() => this.props.onDelete(movie._id)} className="btn btn-danger">
                     Delete
                 </button>
             ),
@@ -32,12 +26,7 @@ class MoviesTable extends Component {
     render() {
         const { movies, onSort, sortColumn } = this.props;
         return (
-            <Table
-                columns={this.columns}
-                data={movies}
-                sortColumn={sortColumn}
-                onSort={onSort}
-            />
+            <Table columns={this.columns} data={movies} sortColumn={sortColumn} onSort={onSort} />
         );
     }
 }
