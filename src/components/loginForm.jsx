@@ -1,10 +1,17 @@
 import React, { Component } from "react";
 
 class LoginForm extends Component {
+    username = React.createRef(); //When we really need to access the DOM (see input id="username")
+
+    componentDidMount() {
+        this.username.current.focus();
+    }
+
     handleSubmit = (e) => {
         e.preventDefault();
 
         console.debug("Submitted");
+        const username = this.username.current.value;
         //Call the server, save changes, redirect
     };
     render() {
@@ -15,6 +22,7 @@ class LoginForm extends Component {
                     <div className="form-group">
                         <label htmlFor="username">Username</label>
                         <input
+                            ref={this.username}
                             id="username"
                             type="text"
                             className="form-control"
