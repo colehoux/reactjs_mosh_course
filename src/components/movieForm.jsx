@@ -13,8 +13,8 @@ class MovieForm extends Form {
             numberInStock: "",
             dailyRentalRate: "",
         },
+        genres: [],
         errors: {},
-        genres: getGenres(),
     };
 
     schema = {
@@ -25,23 +25,34 @@ class MovieForm extends Form {
         dailyRentalRate: Joi.number().min(0).max(10).required().label("Rate"),
     };
     componentDidMount() {
-        const { id } = this.props.match.params;
+        this.setState({ genres: getGenres() });
 
-        if (id && id.trim() !== "" && id !== "new") {
-            const movie = getMovie(id);
-            if (!movie) {
-                this.props.history.replace("/not-found");
-            } else {
-                const newMovie = { ...movie, genreId: movie.genre._id };
-                delete newMovie.genre;
-                this.setState({ data: newMovie });
-                // this.setState({ data: { ...movie, genre: movie.genre._id } });
-            }
-        }
+        const movieId = this.props.match.params.id;
+
+        if (movieId === "new") return;
+
+        const movie = getMovie(movieId);
+        if (!movie) return this.props.history.replace("/not-found");
+
+        // const newMovie = { ...movie, genreId: movie.genre._id };
+        // delete newMovie.genre;
+        // this.setState({ data: newMovie });
+        this.setState({ data: this.mapToViewModel(movie) });
+        // this.setState({ data: { ...movie, genre: movie.genre._id } });
+    }
+
+    mapToViewModel(movie) {
+        return {
+            _id: movie._id,
+            title: movie.title,
+            genreId: movie.genre._id,
+            numberInStock: movie.numberInStock,
+            dailyRentalRate: movie.dailyRentalRate,
+        };
     }
 
     doSubmit = () => {
-        const movies = saveMovie(this.state.data);
+        saveMovie(this.state.data);
         this.props.history.push("/movies");
     };
 
@@ -53,7 +64,7 @@ class MovieForm extends Form {
                     <h1>Movie Form {data._id && data._id}</h1>
                     <form onSubmit={this.handleSubmit}>
                         {this.renderInput("title", "Title")}
-                        {this.renderSelect("genreId", "Genre", genres, "_id", "name", data.genreId)}
+                        {this.renderSelect("genreId", "Genre", genres)}
                         {this.renderInput("numberInStock", "Number in Stock", "number")}
                         {this.renderInput("dailyRentalRate", "Rate")}
                         {this.renderButton("Save")}
