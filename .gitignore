@@ -74,3 +74,6 @@ typings/
 
 #DynamoDB Local files 
 .dynamodb/ 
+
+#VS Code config
+.vscode/
