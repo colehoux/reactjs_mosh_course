@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { getMovies } from "../services/fakeMovieService";
+import { deleteMovie, getMovies } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import Pagination from "./common/pagination";
 import ListGroup from "./common/listGroup";
 import { paginate } from "../utils/paginate";
 import MoviesTable from "./moviesTable";
+import { Link } from "react-router-dom";
 import _ from "lodash";
 
 class Movies extends Component {
@@ -24,7 +25,9 @@ class Movies extends Component {
         this.setState({ movies: getMovies(), genres });
     }
     handleDelete = (movieId) => {
-        const movies = this.state.movies.filter((m) => m._id !== movieId);
+        const deletedMovie = deleteMovie(movieId);
+
+        const movies = this.state.movies.filter((m) => m._id !== deletedMovie._id);
         this.setState({ movies });
     };
     handleLike = (movie) => {
@@ -47,23 +50,13 @@ class Movies extends Component {
     };
 
     getPagedData = () => {
-        const {
-            pageSize,
-            currentPage,
-            sortColumn,
-            movies: allMovies,
-            selectedGenre,
-        } = this.state;
+        const { pageSize, currentPage, sortColumn, movies: allMovies, selectedGenre } = this.state;
 
         const filtered =
             selectedGenre && selectedGenre._id
                 ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
                 : allMovies;
-        const sorted = _.orderBy(
-            filtered,
-            [sortColumn.path],
-            [sortColumn.order]
-        );
+        const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
         const movies = paginate(sorted, currentPage, pageSize);
 
         return { totalCount: filtered.length, data: movies };
@@ -74,9 +67,7 @@ class Movies extends Component {
         const { pageSize, currentPage, sortColumn, genres } = this.state;
 
         if (count === 0) {
-            return (
-                <h4 className="my-4">There are no movies in the database.</h4>
-            );
+            return <h4 className="my-4">There are no movies in the database.</h4>;
         }
 
         const { totalCount, data: movies } = this.getPagedData();
@@ -91,9 +82,10 @@ class Movies extends Component {
                     />
                 </div>
                 <div className="col">
-                    <h4 className="mb-4">
-                        Showing {totalCount} movies in the database
-                    </h4>
+                    <Link to="/movies/new" className="btn btn-primary mb-4">
+                        New Movie
+                    </Link>
+                    <h4 className="mb-4">Showing {totalCount} movies in the database</h4>
                     <MoviesTable
                         movies={movies}
                         onLike={this.handleLike}

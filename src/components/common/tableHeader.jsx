@@ -18,7 +18,6 @@ class TableHeader extends Component {
         return <i className="fa fa-sort-desc"></i>;
     };
     render() {
-        console.debug(this.props.columns);
         return (
             <thead>
                 <tr>

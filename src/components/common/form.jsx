@@ -69,6 +69,29 @@ class Form extends Component {
             />
         );
     }
+
+    renderSelect(name, label, options, optionsValue, optionsLabel) {
+        const { data, errors } = this.state;
+        return (
+            <div className="form-group">
+                <label htmlFor={name}>{label}</label>
+                <select
+                    name={name}
+                    onChange={this.handleChange}
+                    value={data[name]}
+                    className={`custom-select ${errors[name] ? "is-invalid" : ""}`}
+                >
+                    <option></option>
+                    {options.map((option) => (
+                        <option key={option[optionsValue]} value={option[optionsValue]}>
+                            {option[optionsLabel]}
+                        </option>
+                    ))}
+                </select>
+                {errors[name] && <div className="invalid-feedback">{errors[name]}</div>}
+            </div>
+        );
+    }
 }
 
 export default Form;
