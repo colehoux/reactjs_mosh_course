@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { deleteMovie, getMovies } from "../services/fakeMovieService";
-import { getGenres } from "../services/fakeGenreService";
+import { deleteMovie } from "../services/fakeMovieService";
+import { getMovies as getMovies } from "../services/movieService";
+import { getGenres } from "../services/genreService";
 import Pagination from "./common/pagination";
 import ListGroup from "./common/listGroup";
 import { paginate } from "../utils/paginate";
@@ -13,18 +14,17 @@ class Movies extends Component {
     state = {
         movies: [],
         genres: [],
-        genreFilters: getGenres(),
         currentPage: 1,
         pageSize: 4,
         sortColumn: { path: "title", order: "asc" },
         selectedGenre: {},
         searchQuery: "",
-        // currentFilter: null,
-        // selectedGenre: null,
     };
-    componentDidMount() {
-        const genres = [{ _id: "", name: "All genres" }, ...getGenres()];
-        this.setState({ movies: getMovies(), genres });
+    async componentDidMount() {
+        const { data: genres } = await getGenres();
+        genres.splice(0, 0, { _id: "", name: "All genres" });
+        const { data: movies } = await getMovies();
+        this.setState({ movies, genres });
     }
     handleDelete = (movieId) => {
         const deletedMovie = deleteMovie(movieId);
