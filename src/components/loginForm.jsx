@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
 import Form from "./common/form";
-import * as authService from "../services/authService";
+import auth from "../services/authService";
 
 class LoginForm extends Form {
     state = {
@@ -19,9 +19,7 @@ class LoginForm extends Form {
         const { data } = this.state;
 
         try {
-            const { data: jwt } = await authService.login(data.username, data.password);
-            localStorage.setItem("token", jwt);
-            //window.location() instead of this.props.history.push() to reload the entire app to triggercomponentDidMount() to display user via localStorage (see App.js )
+            await auth.login(data.username, data.password);
             window.location = "/";
         } catch (ex) {
             if (ex.response && ex.response.status === 400) {
