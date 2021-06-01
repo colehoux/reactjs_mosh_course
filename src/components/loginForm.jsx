@@ -21,7 +21,8 @@ class LoginForm extends Form {
         try {
             const { data: jwt } = await authService.login(data.username, data.password);
             localStorage.setItem("token", jwt);
-            this.props.history.push("/");
+            //window.location() instead of this.props.history.push() to reload the entire app to triggercomponentDidMount() to display user via localStorage (see App.js )
+            window.location = "/";
         } catch (ex) {
             if (ex.response && ex.response.status === 400) {
                 const errors = { ...this.state.errors };
