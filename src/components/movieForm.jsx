@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
 import Form from "./common/form";
-import { getGenres } from "../services/fakeGenreService";
-import { getMovie, saveMovie } from "../services/fakeMovieService";
+import { getGenres } from "../services/genreService";
+import { getMovie, saveMovie } from "../services/movieService";
 
 class MovieForm extends Form {
     state = {
@@ -24,21 +24,29 @@ class MovieForm extends Form {
         numberInStock: Joi.number().integer().min(0).max(100).required().label("Number in Stock"),
         dailyRentalRate: Joi.number().min(0).max(10).required().label("Rate"),
     };
-    componentDidMount() {
-        this.setState({ genres: getGenres() });
 
-        const movieId = this.props.match.params.id;
+    async populateGenres() {
+        const { data: genres } = await getGenres();
+        this.setState({ genres });
+    }
 
-        if (movieId === "new") return;
+    async populateMovie() {
+        try {
+            const movieId = this.props.match.params.id;
+            if (movieId === "new") return;
+            const { data: movie } = await getMovie(movieId);
+            this.setState({ data: this.mapToViewModel(movie) });
+        } catch (ex) {
+            if (ex.response && ex.response.status === 404) {
+                this.props.history.replace("/not-found");
+            }
+        }
+    }
 
-        const movie = getMovie(movieId);
-        if (!movie) return this.props.history.replace("/not-found");
+    async componentDidMount() {
+        await this.populateGenres();
 
-        // const newMovie = { ...movie, genreId: movie.genre._id };
-        // delete newMovie.genre;
-        // this.setState({ data: newMovie });
-        this.setState({ data: this.mapToViewModel(movie) });
-        // this.setState({ data: { ...movie, genre: movie.genre._id } });
+        await this.populateMovie();
     }
 
     mapToViewModel(movie) {
@@ -51,8 +59,8 @@ class MovieForm extends Form {
         };
     }
 
-    doSubmit = () => {
-        saveMovie(this.state.data);
+    doSubmit = async () => {
+        const res = await saveMovie(this.state.data);
         this.props.history.push("/movies");
     };
 
