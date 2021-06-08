@@ -1,16 +1,11 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
+import useDocumentTitle from "./useDocumentTitle";
 
 export default function Counter(props) {
     const [count, setCount] = useState(0);
     const [name, setName] = useState("");
 
-    useEffect(() => {
-        document.title = `${name} has clicked ${count} times!`;
-
-        return () => {
-            //cleanup
-        };
-    }, [count, name]);
+    useDocumentTitle(`${name} clicked ${count} times`);
 
     return (
         <Fragment>
